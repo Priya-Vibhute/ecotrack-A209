@@ -60,5 +60,13 @@ public class RequestController {
 	{
 		return ResponseEntity.ok(requestService.getAllRequests(pageNumber,pageSize));
 	}
+	
+	
+	@GetMapping("/{email}")
+	public ResponseEntity<List<RequestDto>> 
+	fetchRequestsByEmail(@PathVariable String email)
+	{
+		return ResponseEntity.ok(requestService.getRequestsByEmail(email));
+	}
 
 }
