@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.learn.ecotrack.dtos.WorkshopDto;
 import com.learn.ecotrack.entities.Workshop;
@@ -11,6 +12,7 @@ import com.learn.ecotrack.exceptions.NotFoundException;
 import com.learn.ecotrack.repositories.WorkshopRepository;
 import com.learn.ecotrack.services.WorkShopService;
 
+@Service
 public class WorkshopServiceImpl implements WorkShopService{
 	
 	@Autowired
@@ -33,7 +35,12 @@ public class WorkshopServiceImpl implements WorkShopService{
 		Workshop workshop = workshopRepository.findById(id)
 		.orElseThrow(()->new NotFoundException("Workshop not found"));
 		
-		return null;
+		Workshop newWorkshop = modelMapper.map(workshopDto, Workshop.class);
+		
+		newWorkshop.setId(workshop.getId());
+		Workshop savedWorkshop = workshopRepository.save(newWorkshop);
+		
+		return modelMapper.map(savedWorkshop, WorkshopDto.class);
 	}
 
 	@Override
@@ -41,19 +48,22 @@ public class WorkshopServiceImpl implements WorkShopService{
 		Workshop workshop = workshopRepository.findById(id)
 				.orElseThrow(()->new NotFoundException("Workshop not found"));
 		
+		workshopRepository.delete(workshop);
+		
 	}
 
 	@Override
 	public List<WorkshopDto> getWorkshops() {
-		// TODO Auto-generated method stub
-		return null;
+		return workshopRepository.findAll()
+				.stream().map(w->modelMapper.map(w, WorkshopDto.class))
+				.toList();
 	}
 
 	@Override
 	public WorkshopDto getWorkshopById(int id) {
 		Workshop workshop = workshopRepository.findById(id)
 				.orElseThrow(()->new NotFoundException("Workshop not found"));
-		return null;
+		return modelMapper.map(workshop,WorkshopDto.class);
 	}
 
 }
