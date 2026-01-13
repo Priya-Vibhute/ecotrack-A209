@@ -45,9 +45,11 @@ public class User {
 	private Role role;
 	
 	@OneToMany(mappedBy = "user")
-	@JsonBackReference
+	@JsonBackReference("user-requests")
 	private List<Request> requests;
 	
-	
+	@OneToMany(mappedBy = "user")
+	@JsonBackReference("user-enrollments")
+	private List<Enrollment> enrollments;
 	
 }

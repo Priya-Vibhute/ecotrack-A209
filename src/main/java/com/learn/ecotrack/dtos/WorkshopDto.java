@@ -1,6 +1,9 @@
 package com.learn.ecotrack.dtos;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.learn.ecotrack.entities.Enrollment;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,5 +22,6 @@ public class WorkshopDto {
 	private String image;
 	private String venue;
 	private LocalDateTime startDate;
+	private List<Enrollment> enrollments;
 
 }
