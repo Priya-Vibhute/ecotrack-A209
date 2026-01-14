@@ -92,5 +92,27 @@ public class RequestServiceImpl implements RequestService {
 		
 		return requests;
 	}
+	
+	public RequestDto getRequestById(int id)
+	{
+		Request request = requestRepository.findById(id)
+		.orElseThrow(()->new NotFoundException("Request Not found"));
+		
+		return modelMapper.map(request, RequestDto.class);
+	}
+
+	@Override
+	public RequestDto updateRequest(int id, RequestDto requestDto) {
+		
+		Request request = requestRepository.findById(id)
+				.orElseThrow(()->new NotFoundException("Request Not found"));
+		
+		Request updatedRequest = modelMapper.map(requestDto, Request.class);
+		updatedRequest.setId(id);
+		
+		Request savedRequest = requestRepository.save(updatedRequest);
+		
+		return modelMapper.map(savedRequest, RequestDto.class);
+	}
 
 }

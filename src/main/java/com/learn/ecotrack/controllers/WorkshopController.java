@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,14 +15,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.learn.ecotrack.dtos.WorkshopDto;
+import com.learn.ecotrack.services.FileService;
 import com.learn.ecotrack.services.WorkShopService;
 
 @RestController
 @RequestMapping("/workshops")
 public class WorkshopController {
+	
+	@Autowired
+	private FileService fileService;
+	
+	@Value("${workshop.images}")
+	private String path;
+	
 	
 	@Autowired
 	private WorkShopService workShopService;
@@ -60,7 +71,26 @@ public class WorkshopController {
     	map.put("message", "Workshop deleted");
     	return ResponseEntity.ok(map);
     }
-	
+    
+    @PutMapping("/{id}/upload-image")
+    public ResponseEntity<?> uploadImage(@PathVariable int id,
+    		 @RequestParam("workshopImage") MultipartFile multipartFile)
+    {
+    	WorkshopDto workshop = workShopService.getWorkshopById(id);
+    	
+    	String fileName = fileService.uploadFile(multipartFile, path);
+    	
+    	workshop.setImage(fileName);
+    	
+    	workShopService.updateWorkshop(id, workshop);
+    	
+    	HashMap<String, String> hashMap = new HashMap<String, String>();
+    	
+    	hashMap.put("message",fileName+" uploaded successfully");
+    	
+    	
+    	return ResponseEntity.ok(hashMap);
+    }
    
 
 }

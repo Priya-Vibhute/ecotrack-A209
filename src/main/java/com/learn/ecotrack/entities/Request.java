@@ -34,6 +34,7 @@ public class Request {
 	@ManyToOne
 	@JsonManagedReference
 	private User user;
+	private String image;
 	
 	
 

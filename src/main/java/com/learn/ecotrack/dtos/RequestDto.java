@@ -23,5 +23,6 @@ public class RequestDto {
 	private RequestStatus status;
 	private String reason;
 	private User user;
+	private String image;
 
 }
