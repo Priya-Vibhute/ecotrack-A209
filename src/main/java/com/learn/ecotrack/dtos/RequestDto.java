@@ -24,5 +24,6 @@ public class RequestDto {
 	private String reason;
 	private User user;
 	private String image;
+	private String pickupAddress;
 
 }

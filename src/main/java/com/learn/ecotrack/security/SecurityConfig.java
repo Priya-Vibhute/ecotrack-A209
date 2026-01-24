@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -42,11 +43,18 @@ public class SecurityConfig {
 		
 		httpSecurity
 		.csrf(csrf->csrf.disable())
+		.cors(Customizer.withDefaults())
 		.authorizeHttpRequests(request->
 		request
-		.requestMatchers(HttpMethod.POST,"/users/register").permitAll()
-		.requestMatchers(HttpMethod.GET,"/workshops/**").permitAll()
-		.anyRequest().authenticated()
+		.requestMatchers(HttpMethod.POST,"/users/register","/auth/login").permitAll()
+		.requestMatchers(HttpMethod.GET,"/workshops/**","/users/exists").permitAll()
+		.requestMatchers(HttpMethod.POST,"/workshops").hasRole("ADMIN")
+		.requestMatchers(HttpMethod.PUT,"/workshops/**",
+				"/requests/*/approve","/requests/*/reject")
+		.hasRole("ADMIN")
+		.requestMatchers(HttpMethod.DELETE,"/workshops/**").hasRole("ADMIN")
+		.anyRequest()
+		.authenticated()
 		);
 		
 	    httpSecurity.exceptionHandling(authentication->
@@ -77,8 +85,7 @@ public class SecurityConfig {
 	        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 	        config.setAllowedHeaders(List.of("*"));
 	        config.setAllowCredentials(true);
-
-//	        For more restrictive CORS settings, you can specify allowed headers and methods explicitly
+       
 	        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 	        source.registerCorsConfiguration("/**", config);
 	        return source;

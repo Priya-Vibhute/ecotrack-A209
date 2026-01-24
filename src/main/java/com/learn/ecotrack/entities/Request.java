@@ -31,6 +31,8 @@ public class Request {
 	
 	private String reason;
 	
+	private String pickupAddress;
+	
 	@ManyToOne
 	@JsonManagedReference
 	private User user;
