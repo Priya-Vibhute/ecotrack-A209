@@ -8,11 +8,16 @@ import com.learn.ecotrack.dtos.EnrollmentDto;
 import com.learn.ecotrack.entities.Enrollment;
 import com.learn.ecotrack.entities.User;
 import com.learn.ecotrack.entities.Workshop;
+import com.learn.ecotrack.enums.PaymentStatus;
 import com.learn.ecotrack.exceptions.NotFoundException;
 import com.learn.ecotrack.repositories.EnrollmentRepository;
 import com.learn.ecotrack.repositories.UserRepository;
 import com.learn.ecotrack.repositories.WorkshopRepository;
 import com.learn.ecotrack.services.EnrollmentService;
+import com.learn.ecotrack.services.RazorpayService;
+import com.razorpay.RazorpayException;
+
+import com.razorpay.*;
 
 @Service
 public class EnrollmentServiceImpl implements EnrollmentService {
@@ -28,6 +33,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private RazorpayService razorpayService;
 
 	@Override
 	public EnrollmentDto enroll(String email, int workshopId) {
@@ -41,10 +49,22 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		Workshop workshop = workshopRepository.findById(workshopId)
 		.orElseThrow(()->new NotFoundException("workshop not found"));
 		
+		Order order=null;
+		
+		try {
+			order=razorpayService.createOrder((double)workshop.getPrice());
+		} catch (RazorpayException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		Enrollment enrollment = new Enrollment();
 		enrollment.setUser(user);
 		enrollment.setWorkshop(workshop);
 		enrollment.setAmount(workshop.getPrice());
+		enrollment.setRazorpayOrderId(order.get("id"));
+		enrollment.setPaymentStatus(PaymentStatus.CREATED);
+		
 		
 		Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
 			

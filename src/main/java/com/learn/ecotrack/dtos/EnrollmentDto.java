@@ -3,6 +3,7 @@ package com.learn.ecotrack.dtos;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.learn.ecotrack.entities.User;
 import com.learn.ecotrack.entities.Workshop;
+import com.learn.ecotrack.enums.PaymentStatus;
 
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -21,5 +22,9 @@ public class EnrollmentDto {
 	private User user;
 	
 	private Integer amount;
+	
+	private String razorpayOrderId;
+	private String razorpayPaymentId;
+	private PaymentStatus paymentStatus;
 
 }

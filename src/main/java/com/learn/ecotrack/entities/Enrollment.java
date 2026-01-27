@@ -1,8 +1,11 @@
 package com.learn.ecotrack.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.learn.ecotrack.enums.PaymentStatus;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,6 +32,12 @@ public class Enrollment {
 	private User user;
 	
 	private Integer amount;
+	
+	private String razorpayOrderId;
+	private String razorpayPaymentId;
+	
+	@Enumerated(EnumType.STRING)
+	private PaymentStatus paymentStatus;
 	
 
 }
